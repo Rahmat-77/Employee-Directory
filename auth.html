@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Directory | Group B3-G3 Authentication</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter / Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Official Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .custom-backdrop {
+      background-image: 
+        radial-gradient(circle at 75% 50%, rgba(10, 15, 29, 0.45) 0%, rgba(7, 10, 20, 0.92) 100%),
+        url('/static/img/employee_directory_advanced_bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .card-dark {
+      background: rgba(18, 24, 38, 0.92);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+    }
+    .input-dark {
+      background: rgba(13, 17, 28, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .input-dark:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    @keyframes float-gentle {
+      0%, 100% { transform: translateY(0px) scale(1); filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
+      50% { transform: translateY(-8px) scale(1.01); filter: drop-shadow(0 30px 45px rgba(59,130,246,0.3)); }
+    }
+    .floating-shield {
+      animation: float-gentle 4.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="custom-backdrop min-h-screen text-slate-100 flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP SUBTLE APP BAR (FOR FAST REST TESTING) -->
+  <header class="w-full py-3 px-6 flex items-center justify-between z-20">
+    <a href="/" class="flex items-center space-x-2 text-xs font-semibold text-slate-400 hover:text-white transition">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      <span>Back to Personnel Directory</span>
+    </a>
+
+    <!-- REST API Endpoints Quick Access in New Tabs -->
+    <div class="flex items-center space-x-2 text-xs font-mono">
+      <a href="http://localhost:5001/health" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-900/60 transition flex items-center space-x-1" title="Open GET /health in new tab">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>/health</span>
+      </a>
+      <a href="http://localhost:5001/items" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-full bg-blue-950/60 text-blue-400 border border-blue-500/30 hover:bg-blue-900/60 transition flex items-center space-x-1" title="Open GET /items in new tab">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+        <span>/items</span>
+      </a>
+      <a href="http://localhost:5001/metrics" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-full bg-amber-950/60 text-amber-400 border border-amber-500/30 hover:bg-amber-900/60 transition flex items-center space-x-1" title="Open GET /metrics in new tab">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+        <span>/metrics</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN AUTH WORKSPACE -->
+  <main class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-12 py-4 relative z-10">
+    <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      
+      <!-- LEFT SECTION: 3D METALLIC GOLD SHIELD LOGO (AS IN REFERENCE) -->
+      <div class="lg:col-span-6 flex flex-col items-center justify-center p-4">
+        <div class="relative flex items-center justify-center">
+          <!-- Ambient Radial Lighting behind Shield -->
+          <div class="absolute w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <!-- Exact High-Resolution 3D Metallic Gold Shield -->
+          <div class="floating-shield cursor-pointer" onclick="openGoogleAccountChooser('signin')" title="Employee Directory - Practical 10 Shield Badge">
+            <img 
+              src="/static/logo_text_badge.jpg" 
+              alt="Employee Directory 3D Gold Shield Badge" 
+              class="w-72 sm:w-80 md:w-96 h-auto object-contain select-none drop-shadow-2xl rounded-3xl"
+              data-legacy-logo="/static/img/advanced_employee_directory_logo.png"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SECTION: EXACT REPLICA OF THE CARD FROM USER SCREENSHOT -->
+      <div class="lg:col-span-6 flex justify-center lg:justify-end">
+        <div class="card-dark w-full max-w-[420px] rounded-3xl p-7 relative overflow-hidden">
+          
+          <!-- Header: Logo + Title + Group Badge -->
+          <div class="flex items-center space-x-3.5 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-slate-900/80 border border-slate-700/80 p-0.5 flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden">
+              <img src="/static/logo_text_badge.jpg" alt="Logo" class="w-full h-full object-cover rounded-lg" />
+            </div>
+            <div>
+              <h1 class="text-base font-extrabold tracking-wide text-white uppercase">EMPLOYEE DIRECTORY</h1>
+              <p class="text-xs text-slate-400 font-medium">Group B3-G3</p>
+            </div>
+          </div>
+
+          <!-- Mode Switcher Pill Tabs -->
+          <div class="flex p-1 bg-slate-950/80 rounded-2xl border border-slate-800/80 mb-6">
+            <button id="tabSignInBtn" onclick="switchAuthMode('signin')" class="flex-1 py-2 text-xs font-semibold rounded-xl transition text-slate-400 hover:text-white">
+              Sign in
+            </button>
+            <button id="tabCreateBtn" onclick="switchAuthMode('create')" class="flex-1 py-2 text-xs font-semibold rounded-xl transition bg-slate-800 text-white shadow-sm">
+              Create Account
+            </button>
+          </div>
+
+          <!-- Section Heading -->
+          <h2 id="authHeading" class="text-lg font-bold text-white mb-4">Create Account</h2>
+
+          <!-- Action Buttons (Google Sign In & Google Create Account) -->
+          <div class="space-y-2.5 mb-5">
+            
+            <!-- Button 1: Sign in with Google -->
+            <button type="button" onclick="openGoogleAccountChooser('signin')" class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-800 text-xs font-semibold flex items-center justify-center space-x-2.5 transition shadow-sm border border-slate-200 group active:scale-[0.99]">
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Sign in with Google</span>
+            </button>
+
+            <!-- Button 2: Create Account with Google -->
+            <button type="button" onclick="openGoogleAccountChooser('create')" class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-800 text-xs font-semibold flex items-center justify-center space-x-2.5 transition shadow-sm border border-slate-200 group active:scale-[0.99]">
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Create Account with Google</span>
+            </button>
+          </div>
+
+          <!-- Divider: OR WITH EMAIL -->
+          <div class="relative flex items-center justify-center my-4">
+            <div class="border-t border-slate-800 w-full"></div>
+            <span class="bg-[#121826] px-3 text-[10px] text-slate-400 font-mono uppercase tracking-wider text-center">
+              OR WITH EMAIL
+            </span>
+          </div>
+
+          <!-- Form Fields -->
+          <form id="replicaAuthForm" class="space-y-3">
+            
+            <!-- FULL NAME (VISIBLE IN CREATE ACCOUNT) -->
+            <div id="fieldFullName">
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">FULL NAME</label>
+              <input 
+                type="text" 
+                id="inputFullName" 
+                placeholder="e.g. Full Name" 
+                class="w-full px-3.5 py-2.5 input-dark text-slate-100 rounded-xl text-xs outline-none transition placeholder-slate-600"
+              />
+            </div>
+
+            <!-- EMAIL ADDRESS -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">EMAIL ADDRESS</label>
+              <input 
+                type="email" 
+                id="inputEmail" 
+                required 
+                placeholder="name@student.college.edu" 
+                class="w-full px-3.5 py-2.5 input-dark text-slate-100 rounded-xl text-xs outline-none transition placeholder-slate-600"
+              />
+            </div>
+
+            <!-- PASSWORD -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">PASSWORD</label>
+              <input 
+                type="password" 
+                id="inputPassword" 
+                required 
+                placeholder="••••••••" 
+                class="w-full px-3.5 py-2.5 input-dark text-slate-100 rounded-xl text-xs outline-none transition placeholder-slate-600"
+              />
+            </div>
+
+            <!-- DESIRED ROLE (VISIBLE IN CREATE ACCOUNT) -->
+            <div id="fieldDesiredRole">
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">DESIRED ROLE</label>
+              <input 
+                type="text" 
+                id="inputDesiredRole" 
+                placeholder="e.g. Desired Role" 
+                class="w-full px-3.5 py-2.5 input-dark text-slate-100 rounded-xl text-xs outline-none transition placeholder-slate-600"
+              />
+            </div>
+
+            <!-- Primary Action Button -->
+            <button 
+              type="submit" 
+              id="btnMainSubmit" 
+              class="w-full mt-3 py-3 px-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center justify-center space-x-2"
+            >
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              <span id="btnSubmitLabel">Create & Join Platform</span>
+            </button>
+
+          </form>
+
+          <!-- Feedback Status Toast -->
+          <div id="authAlert" class="mt-3 text-xs hidden p-2.5 rounded-xl font-mono text-center"></div>
+
+          <!-- Demo Quickfill Bottom Link -->
+          <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+            <span>Demo email</span>
+            <button type="button" onclick="autofillDemoCreds()" class="text-blue-400 hover:underline">Autofill</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- GOOGLE ACCOUNTS DIALOG: EXACT DARK ACCOUNT CHOOSER (AS IN SCREENSHOT) -->
+  <div id="googleAccountModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-all duration-200">
+    <div class="relative w-full max-w-2xl bg-[#1e1f20] text-slate-100 rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/10 overflow-hidden font-sans">
+      
+      <!-- Close button -->
+      <button type="button" onclick="closeGoogleModal()" class="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Google Logo Bar -->
+      <div class="flex items-center space-x-2.5 mb-7">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span class="text-xs font-medium text-slate-300">Sign in with Google</span>
+      </div>
+
+      <!-- Main Two-Column Content Layout (As in Screenshot) -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Side: App Branding & Heading -->
+        <div class="md:col-span-5 space-y-4">
+          <!-- Stylized Google Antigravity / App Ribbon Emblem -->
+          <div class="w-10 h-10 flex items-center justify-center">
+            <svg class="w-9 h-9" viewBox="0 0 48 48" fill="none">
+              <path d="M24 6C16 6 10 12 10 20C10 28 17 38 24 42C31 38 38 28 38 20C38 12 32 6 24 6Z" fill="url(#gradAntigrav)" />
+              <path d="M24 13C19.5 13 16 16.5 16 21C16 25.5 24 34 24 34C24 34 32 25.5 32 21C32 16.5 28.5 13 24 13Z" fill="#1e1f20" />
+              <defs>
+                <linearGradient id="gradAntigrav" x1="10" y1="6" x2="38" y2="42" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#38bdf8"/>
+                  <stop offset="0.5" stop-color="#6366f1"/>
+                  <stop offset="1" stop-color="#f59e0b"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-normal text-white tracking-tight leading-tight">
+            Choose an account
+          </h2>
+
+          <p class="text-sm text-slate-300">
+            to continue to <span class="font-medium text-white">Employee Directory</span>
+          </p>
+
+          <!-- Toggle between Sign In & Create Account inside modal -->
+          <div class="pt-2">
+            <div class="inline-flex p-1 bg-white/5 rounded-xl border border-white/10 text-xs">
+              <button type="button" id="modalTabSignIn" onclick="setGoogleModalAction('signin')" class="px-3 py-1.5 rounded-lg bg-white/20 text-white font-medium transition">
+                Sign in
+              </button>
+              <button type="button" id="modalTabCreate" onclick="setGoogleModalAction('create')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+                Create Account
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Exact Google Accounts Rows -->
+        <div class="md:col-span-7">
+          <div id="deviceAccountsList" class="divide-y divide-white/10 border-t border-b border-white/10">
+            <!-- Populated with exact accounts from screenshot -->
+          </div>
+
+          <!-- Use another account row -->
+          <div class="border-b border-white/10">
+            <button type="button" onclick="promptCustomGoogleAccount()" class="w-full py-3.5 px-3 flex items-center space-x-3.5 text-left hover:bg-white/5 transition group rounded-xl">
+              <div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-slate-300 group-hover:text-white group-hover:border-white transition flex-shrink-0">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm font-medium text-slate-200 group-hover:text-white">Use another account</span>
+            </button>
+          </div>
+
+          <!-- Privacy Policy & Terms Footer -->
+          <p class="text-xs text-slate-400 mt-6 leading-relaxed">
+            Before using this app, you can review Employee Directory's <a href="#" class="text-blue-400 hover:underline">Privacy Policy</a> and <a href="#" class="text-blue-400 hover:underline">Terms of Service</a>.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Bottom System Footer (Language / Help / Privacy) -->
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-6 mt-6 border-t border-white/10">
+        <div class="flex items-center space-x-1 cursor-pointer hover:text-slate-300">
+          <span>English (United States)</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+        </div>
+        <div class="flex items-center space-x-6">
+          <a href="#" class="hover:text-slate-300">Help</a>
+          <a href="#" class="hover:text-slate-300">Privacy</a>
+          <a href="#" class="hover:text-slate-300">Terms</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 2: GOOGLE NATIVE APP SECURITY CONSENT MODAL (EXACT MATCH TO USER SCREENSHOT) -->
+  <div id="googleSecurityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-all duration-200">
+    <div class="relative w-full max-w-2xl bg-[#1e1f20] text-slate-100 rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/10 overflow-hidden font-sans">
+      
+      <!-- Close button -->
+      <button type="button" onclick="cancelGoogleSecurityModal()" class="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Two-Column Grid Content Layout (As in Screenshot) -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Side: Google 'G' + Big Warning Heading + User Avatar Pill -->
+        <div class="md:col-span-6 space-y-6">
+          <!-- Google 'G' Logo -->
+          <div>
+            <svg class="w-8 h-8" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-normal text-white tracking-tight leading-snug">
+            Make sure that you downloaded this app from Google
+          </h2>
+
+          <!-- Selected User Account Pill -->
+          <div class="flex items-center space-x-2.5 pt-2">
+            <div id="securityAccountAvatar" class="w-6 h-6 rounded-full bg-red-900 text-white flex items-center justify-center text-xs font-semibold border border-white/20">
+              F
+            </div>
+            <span id="securityAccountEmail" class="text-xs text-slate-300 font-medium">fs22ai006@gmail.com</span>
+          </div>
+        </div>
+
+        <!-- Right Side: Descriptive Warnings + Cancel / Sign in Action Buttons -->
+        <div class="md:col-span-6 flex flex-col justify-between h-full space-y-6">
+          <div class="space-y-4 text-xs text-slate-300 leading-relaxed pt-2">
+            <p>
+              Don't sign in to <span class="font-semibold text-white">Employee Directory</span> unless you're sure that you downloaded this app from Google.
+            </p>
+            <p>
+              If you downloaded <span class="font-semibold text-white">Employee Directory</span> from Google, this app may be asking you to sign in again now because this app was recently updated.
+            </p>
+            <p>
+              If you're not sure whether you downloaded <span class="font-semibold text-white">Employee Directory</span> from Google, you should delete this app.
+            </p>
+          </div>
+
+          <!-- Bottom Action Buttons: Cancel / Sign in -->
+          <div class="flex items-center justify-end space-x-3 pt-6">
+            <button 
+              type="button" 
+              onclick="cancelGoogleSecurityModal()" 
+              class="px-6 py-2.5 rounded-full border border-white/20 hover:bg-white/10 text-white text-xs font-medium transition active:scale-[0.98]"
+            >
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              id="btnConfirmGoogleSignIn"
+              onclick="confirmGoogleSignIn()" 
+              class="px-7 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition shadow-md active:scale-[0.98]"
+            >
+              Sign in
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom System Footer (Language / Help / Privacy / Terms) -->
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-6 mt-6 border-t border-white/10">
+        <div class="flex items-center space-x-1 cursor-pointer hover:text-slate-300">
+          <span>English (United Kingdom)</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+        </div>
+        <div class="flex items-center space-x-6">
+          <a href="#" class="hover:text-slate-300">Help</a>
+          <a href="#" class="hover:text-slate-300">Privacy</a>
+          <a href="#" class="hover:text-slate-300">Terms</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT AUTHENTICATION CONTROLLER -->
+  <script>
+    let currentMode = 'create'; // 'create' or 'signin'
+    let currentGoogleAction = 'signin';
+
+    // Switch between Sign in and Create Account
+    function switchAuthMode(mode) {
+      currentMode = mode;
+      const tabSignIn = document.getElementById('tabSignInBtn');
+      const tabCreate = document.getElementById('tabCreateBtn');
+      const heading = document.getElementById('authHeading');
+      const fieldFullName = document.getElementById('fieldFullName');
+      const fieldDesiredRole = document.getElementById('fieldDesiredRole');
+      const btnSubmitLabel = document.getElementById('btnSubmitLabel');
+
+      if (mode === 'signin') {
+        tabSignIn.className = 'flex-1 py-2 text-xs font-semibold rounded-xl transition bg-slate-800 text-white shadow-sm';
+        tabCreate.className = 'flex-1 py-2 text-xs font-semibold rounded-xl transition text-slate-400 hover:text-white';
+        heading.textContent = 'Sign In';
+        fieldFullName.classList.add('hidden');
+        fieldDesiredRole.classList.add('hidden');
+        btnSubmitLabel.textContent = 'Sign In to Dashboard';
+      } else {
+        tabCreate.className = 'flex-1 py-2 text-xs font-semibold rounded-xl transition bg-slate-800 text-white shadow-sm';
+        tabSignIn.className = 'flex-1 py-2 text-xs font-semibold rounded-xl transition text-slate-400 hover:text-white';
+        heading.textContent = 'Create Account';
+        fieldFullName.classList.remove('hidden');
+        fieldDesiredRole.classList.remove('hidden');
+        btnSubmitLabel.textContent = 'Create & Join Platform';
+      }
+    }
+
+    // Autofill demo credentials
+    function autofillDemoCreds() {
+      document.getElementById('inputEmail').value = 'zaid.matinuddin@student.college.edu';
+      document.getElementById('inputPassword').value = 'DevOps@2026';
+      if (currentMode === 'create') {
+        document.getElementById('inputFullName').value = 'SHAIKH ZAID MATINUDDIN';
+        document.getElementById('inputDesiredRole').value = 'CI/CD & Containerization Engineer (R3)';
+      }
+    }
+
+    // Handle Form Submit
+    document.getElementById('replicaAuthForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alertBox = document.getElementById('authAlert');
+      const submitBtn = document.getElementById('btnMainSubmit');
+      submitBtn.disabled = true;
+
+      const email = document.getElementById('inputEmail').value.trim();
+      const password = document.getElementById('inputPassword').value.trim();
+      const endpoint = currentMode === 'signin' ? '/api/auth/login' : '/api/auth/register';
+      const payload = { email, password };
+
+      if (currentMode === 'create') {
+        payload.name = document.getElementById('inputFullName').value.trim() || 'DevOps Specialist';
+        payload.role = document.getElementById('inputDesiredRole').value.trim() || 'Engineer';
+      }
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alertBox.textContent = `Success: ${data.message}! Redirecting to Dashboard...`;
+          alertBox.className = "mt-3 text-xs p-2.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 block";
+          setTimeout(() => { window.location.href = '/'; }, 1000);
+        } else {
+          throw new Error(data.message || 'Authentication error');
+        }
+      } catch (err) {
+        alertBox.textContent = `Error: ${err.message}`;
+        alertBox.className = "mt-3 text-xs p-2.5 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/30 block";
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    // --- DEVICE GOOGLE ACCOUNTS MATCHING EXACT DEVICE SCREENSHOT ---
+    const DEFAULT_DEVICE_ACCOUNTS = [
+      {
+        name: "",
+        email: "szaid8364@eng.rizvi.edu.in",
+        initials: "M",
+        type: "initial",
+        avatarBg: "bg-[#5f6368] text-white"
+      },
+      {
+        name: "Zaid Shaikh",
+        email: "szaid8364@gmail.com",
+        initials: "ZS",
+        type: "photo",
+        avatarBg: "bg-teal-500 text-white"
+      },
+      {
+        name: "",
+        email: "fs22ai006@gmail.com",
+        initials: "F",
+        type: "photo_red",
+        avatarBg: "bg-red-900 text-white"
+      },
+      {
+        name: "WAZIDALI SHEIKH",
+        email: "wazida.sheikh@gmail.com",
+        initials: "W",
+        type: "photo_blue",
+        avatarBg: "bg-blue-900 text-white"
+      }
+    ];
+
+    function getStoredGoogleAccounts() {
+      try {
+        const stored = localStorage.getItem("device_google_accounts_v2");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch(e) {}
+      return DEFAULT_DEVICE_ACCOUNTS;
+    }
+
+    function saveDeviceGoogleAccount(email, name) {
+      try {
+        const accounts = getStoredGoogleAccounts();
+        const exists = accounts.find(a => a.email.toLowerCase() === email.toLowerCase());
+        if (!exists) {
+          const initials = name ? name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase() : email[0].toUpperCase();
+          accounts.unshift({
+            name: name,
+            email: email.toLowerCase(),
+            initials: initials,
+            type: "initial",
+            avatarBg: "bg-indigo-600 text-white"
+          });
+          localStorage.setItem("device_google_accounts_v2", JSON.stringify(accounts));
+        }
+      } catch(e) {}
+    }
+
+    function renderDeviceAccounts() {
+      const container = document.getElementById('deviceAccountsList');
+      if (!container) return;
+      const accounts = getStoredGoogleAccounts();
+
+      container.innerHTML = accounts.map((acc) => {
+        const displayName = acc.name || "";
+        const email = acc.email;
+        const initialLetter = acc.initials || email.charAt(0).toUpperCase();
+
+        return `
+          <button type="button" onclick="executeGoogleAction('${email}', '${displayName || email.split('@')[0]}')" class="w-full py-3.5 px-3 flex items-center space-x-3.5 text-left hover:bg-white/5 transition group rounded-xl">
+            <div class="w-8 h-8 rounded-full ${acc.avatarBg} flex items-center justify-center font-medium text-xs flex-shrink-0 shadow-sm border border-white/10">
+              ${initialLetter}
+            </div>
+            <div class="min-w-0 flex-1">
+              ${displayName ? `<div class="text-sm font-medium text-white truncate leading-tight">${displayName}</div>` : ''}
+              <div class="text-xs text-slate-300 truncate leading-tight">${email}</div>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    // --- GOOGLE ACCOUNTS AUTHENTIC MODAL CONTROLS ---
+    function openGoogleAccountChooser(action = 'signin') {
+      currentGoogleAction = action;
+      setGoogleModalAction(action);
+      renderDeviceAccounts();
+      document.getElementById('googleAccountModal').classList.remove('hidden');
+
+      // Trigger Google One Tap if GIS SDK loaded
+      if (window.google && google.accounts && google.accounts.id) {
+        try {
+          google.accounts.id.prompt();
+        } catch(e) {}
+      }
+    }
+
+    function closeGoogleModal() {
+      document.getElementById('googleAccountModal').classList.add('hidden');
+    }
+
+    function setGoogleModalAction(action) {
+      currentGoogleAction = action;
+      const tabSignIn = document.getElementById('modalTabSignIn');
+      const tabCreate = document.getElementById('modalTabCreate');
+
+      if (tabSignIn && tabCreate) {
+        if (action === 'signin') {
+          tabSignIn.className = "px-3 py-1.5 rounded-lg bg-white/20 text-white font-medium transition";
+          tabCreate.className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+        } else {
+          tabCreate.className = "px-3 py-1.5 rounded-lg bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 font-medium transition";
+          tabSignIn.className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+        }
+      }
+      renderDeviceAccounts();
+    }
+
+    let pendingGoogleAuth = null;
+
+    // Triggered when an account is clicked in Step 1 (Account Chooser)
+    function executeGoogleAction(email, name) {
+      closeGoogleModal();
+      saveDeviceGoogleAccount(email, name);
+
+      // Save pending auth data
+      pendingGoogleAuth = { email, name };
+
+      // Set up Step 2: Google Security Warning Modal
+      const avatarEl = document.getElementById('securityAccountAvatar');
+      const emailEl = document.getElementById('securityAccountEmail');
+      
+      const accounts = getStoredGoogleAccounts();
+      const matched = accounts.find(a => a.email.toLowerCase() === email.toLowerCase());
+      const initial = matched?.initials || email.charAt(0).toUpperCase();
+      const bg = matched?.avatarBg || "bg-indigo-600 text-white";
+
+      avatarEl.textContent = initial;
+      avatarEl.className = `w-6 h-6 rounded-full ${bg} flex items-center justify-center text-xs font-semibold border border-white/20`;
+      emailEl.textContent = email;
+
+      // Open Step 2: Google Native App Security Warning Modal
+      document.getElementById('googleSecurityModal').classList.remove('hidden');
+    }
+
+    function cancelGoogleSecurityModal() {
+      document.getElementById('googleSecurityModal').classList.add('hidden');
+      pendingGoogleAuth = null;
+    }
+
+    // Confirmed in Step 2: Proceed with Authentication & Directory Provisioning
+    async function confirmGoogleSignIn() {
+      if (!pendingGoogleAuth) return;
+      const { email, name } = pendingGoogleAuth;
+      const btn = document.getElementById('btnConfirmGoogleSignIn');
+      btn.disabled = true;
+      btn.textContent = "Verifying...";
+
+      const alertBox = document.getElementById('authAlert');
+      const actionText = currentGoogleAction === 'create' ? 'Account Created & Verified' : 'Authenticated';
+
+      alertBox.textContent = `Authenticating Google Account: ${name} (${email})...`;
+      alertBox.className = "mt-3 text-xs p-2.5 rounded-xl bg-blue-500/10 text-blue-300 border border-blue-500/30 block";
+
+      const payload = {
+        provider: "google",
+        name: name,
+        email: email.toLowerCase().trim(),
+        sso_token: "google_oauth_token_" + Math.random().toString(36).substring(2)
+      };
+
+      try {
+        const res = await fetch('/api/auth/sso', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById('googleSecurityModal').classList.add('hidden');
+          alertBox.textContent = `Google Account ${actionText}! Welcome ${data.user.name}. Redirecting...`;
+          alertBox.className = "mt-3 text-xs p-2.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 block";
+          
+          // Smooth redirect through Google verified callback
+          setTimeout(() => {
+            window.location.href = `/auth/google/callback?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&action=${currentGoogleAction}`;
+          }, 600);
+        } else {
+          throw new Error(data.message || 'Google SSO failed');
+        }
+      } catch (err) {
+        document.getElementById('googleSecurityModal').classList.add('hidden');
+        alertBox.textContent = `Google Error: ${err.message}`;
+        alertBox.className = "mt-3 text-xs p-2.5 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/30 block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Sign in";
+      }
+    }
+
+    function promptCustomGoogleAccount() {
+      const isCreate = currentGoogleAction === 'create';
+      const promptMsg = isCreate 
+        ? "Google Account Registration: Enter your actual Google email address on this device:"
+        : "Google Sign In: Enter your actual Google email address on this device:";
+      const email = prompt(promptMsg, "szaid8364@eng.rizvi.edu.in");
+      if (!email) return;
+      const cleanEmail = email.trim();
+      const defaultName = cleanEmail.split('@')[0].replace(/[._-]/g, ' ').toUpperCase();
+      const name = prompt("Enter your Name for this Google Account:", defaultName) || defaultName;
+      executeGoogleAction(cleanEmail, name);
+    }
+
+    // Generic SSO Handler for GitHub / GitLab
+    async function handleSSO(provider) {
+      const alertBox = document.getElementById('authAlert');
+      const payload = {
+        provider: provider.toLowerCase(),
+        name: `SHAIKH ZAID (${provider.toUpperCase()} SSO)`,
+        email: `zaid.${provider.toLowerCase()}@devops.sso.org`
+      };
+
+      try {
+        const res = await fetch('/api/auth/sso', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alertBox.textContent = `Verified: ${data.message}! Redirecting...`;
+          alertBox.className = "mt-3 text-xs p-2.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 block";
+          setTimeout(() => { window.location.href = '/'; }, 1000);
+        } else {
+          throw new Error(data.message || 'SSO failed');
+        }
+      } catch (err) {
+        alertBox.textContent = `SSO Error: ${err.message}`;
+        alertBox.className = "mt-3 text-xs p-2.5 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/30 block";
+      }
+    }
+
+    // Boot & URL Params check
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('mode') === 'signin') {
+        switchAuthMode('signin');
+      } else {
+        switchAuthMode('create');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Directory — Enterprise Authentication</title>
+  <link rel="icon" type="image/jpeg" href="/static/logo_text_badge.jpg" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              950: '#050B1C',
+              900: '#07122B',
+              850: '#0B1736',
+              800: '#0E1F47',
+              750: '#13285C',
+              700: '#193370'
+            },
+            brand: {
+              400: '#38BDF8',
+              500: '#3B82F6',
+              600: '#2563EB',
+              700: '#1D4ED8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Premium Enterprise Smooth Wave Atmosphere */
+    .bg-enterprise-waves {
+      background-color: #050B1C;
+      background-image: 
+        radial-gradient(ellipse 800px 500px at 0% 100%, rgba(99, 102, 241, 0.16), transparent 70%),
+        radial-gradient(ellipse 900px 600px at 20% 90%, rgba(56, 189, 248, 0.14), transparent 70%),
+        radial-gradient(ellipse 700px 450px at 100% 100%, rgba(139, 92, 246, 0.12), transparent 70%),
+        radial-gradient(ellipse 600px 400px at 50% 0%, rgba(37, 99, 235, 0.10), transparent 70%);
+      background-attachment: fixed;
+    }
+
+    html:not(.dark) .bg-enterprise-waves {
+      background-color: #F8FAFC;
+      background-image: 
+        radial-gradient(ellipse 800px 500px at 0% 100%, rgba(99, 102, 241, 0.08), transparent 70%),
+        radial-gradient(ellipse 900px 600px at 20% 90%, rgba(56, 189, 248, 0.08), transparent 70%),
+        radial-gradient(ellipse 700px 450px at 100% 100%, rgba(139, 92, 246, 0.06), transparent 70%),
+        radial-gradient(ellipse 600px 400px at 50% 0%, rgba(37, 99, 235, 0.05), transparent 70%);
+    }
+
+    /* Subtle wave glow movement */
+    @keyframes waveSlow {
+      0%, 100% { transform: translateY(0px) scale(1); opacity: 0.8; }
+      50% { transform: translateY(-12px) scale(1.03); opacity: 1; }
+    }
+    .wave-ambient {
+      animation: waveSlow 16s ease-in-out infinite;
+    }
+
+    /* Gentle floating badge animation */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .hero-badge-float {
+      animation: gentleFloat 5s ease-in-out infinite;
+    }
+
+    /* Input focus transitions */
+    .enterprise-input {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .enterprise-input:focus {
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.22);
+    }
+
+    /* Tab indicator slider */
+    .tab-slider-line {
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s ease;
+    }
+
+    /* Autofill overrides */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #f8fafc;
+      -webkit-box-shadow: 0 0 0px 1000px #07122b inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    html:not(.dark) input:-webkit-autofill,
+    html:not(.dark) input:-webkit-autofill:hover, 
+    html:not(.dark) input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #0f172a;
+      -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    }
+  </style>
+</head>
+<body class="min-h-full bg-enterprise-waves text-slate-100 flex flex-col font-sans antialiased selection:bg-brand-600 selection:text-white transition-colors duration-200 relative overflow-x-hidden">
+
+  <!-- ========================================== -->
+  <!-- 1. FIXED TOP NAVIGATION BAR                -->
+  <!-- ========================================== -->
+  <header class="fixed top-0 left-0 right-0 z-40 bg-[#050B1C]/85 dark:bg-[#050B1C]/85 bg-white/90 backdrop-blur-md border-b border-white/10 dark:border-white/10 border-slate-200 transition-colors duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo & Badge -->
+      <a href="/" class="flex items-center gap-3.5 group focus:outline-none">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-blue-400/40 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform flex-shrink-0 bg-[#0B1528] p-0.5">
+          <img src="/static/logo_text_badge.jpg" alt="Employee Directory Logo" class="w-full h-full object-cover rounded-lg" />
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-extrabold text-lg sm:text-xl lg:text-2xl tracking-tight text-white dark:text-white text-slate-900 group-hover:text-blue-400 transition-colors">
+            Employee Directory
+          </span>
+          <span class="bg-blue-900/50 dark:bg-blue-900/50 bg-blue-100 border border-blue-500/30 text-blue-400 dark:text-blue-400 text-blue-700 text-xs sm:text-sm font-bold px-3 py-0.5 rounded-full tracking-wide">
+            Enterprise
+          </span>
+        </div>
+      </a>
+
+      <!-- Quick Observability & Deployment Endpoint Tabs (Prometheus, Grafana, App, K8s) -->
+      <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/[0.04] dark:bg-white/[0.04] bg-slate-100 border border-white/10 dark:border-white/10 border-slate-300 backdrop-blur-md">
+        <a href="http://localhost:3000/d/emp-dir-dashboard" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-300 hover:text-white hover:bg-emerald-600/30 border border-emerald-500/30 transition shadow-sm" title="Open Grafana Dashboard in new tab">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span>Grafana Dashboard</span>
+          <i data-lucide="external-link" class="w-3 h-3 text-emerald-400/70"></i>
+        </a>
+        <a href="http://localhost:9090/targets" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-orange-300 hover:text-white hover:bg-orange-600/30 border border-orange-500/30 transition shadow-sm" title="Open Prometheus Targets in new tab">
+          <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-400"></i>
+          <span>Prometheus Targets</span>
+          <i data-lucide="external-link" class="w-3 h-3 text-orange-400/70"></i>
+        </a>
+        <a href="http://localhost:5001" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-blue-300 hover:text-white hover:bg-blue-600/30 border border-blue-500/30 transition shadow-sm" title="Open Employee Directory App in new tab">
+          <i data-lucide="server" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span>Employee Directory App</span>
+          <i data-lucide="external-link" class="w-3 h-3 text-blue-400/70"></i>
+        </a>
+        <a href="http://localhost:30501" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-purple-300 hover:text-white hover:bg-purple-600/30 border border-purple-500/30 transition shadow-sm" title="Open Kubernetes NodePort in new tab">
+          <i data-lucide="cpu" class="w-3.5 h-3.5 text-purple-400"></i>
+          <span>Kubernetes NodePort</span>
+          <i data-lucide="external-link" class="w-3 h-3 text-purple-400/70"></i>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation Links with Animated Micro-Interactions -->
+      <nav class="hidden md:flex items-center gap-2 p-1.5 rounded-2xl bg-white/[0.03] dark:bg-white/[0.03] bg-slate-200/50 border border-white/5 dark:border-white/5 border-slate-300/60 backdrop-blur-md shadow-inner">
+        <a href="/" class="group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-base sm:text-lg font-semibold text-slate-300 dark:text-slate-300 text-slate-700 hover:text-white dark:hover:text-white hover:text-blue-600 transition-all duration-200 hover:bg-white/10 dark:hover:bg-white/10 hover:bg-white/80 hover:shadow-sm">
+          <i data-lucide="home" class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform duration-200"></i>
+          <span>Home</span>
+          <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-blue-400 rounded-full group-hover:w-5 transition-all duration-300"></span>
+        </a>
+        <a href="#features" onclick="scrollToFeatures(event)" class="group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-base sm:text-lg font-semibold text-slate-300 dark:text-slate-300 text-slate-700 hover:text-white dark:hover:text-white hover:text-blue-600 transition-all duration-200 hover:bg-white/10 dark:hover:bg-white/10 hover:bg-white/80 hover:shadow-sm">
+          <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-200"></i>
+          <span>Features</span>
+          <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-cyan-400 rounded-full group-hover:w-5 transition-all duration-300"></span>
+        </a>
+        <a href="#security" onclick="scrollToSecurity(event)" class="group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-base sm:text-lg font-semibold text-slate-300 dark:text-slate-300 text-slate-700 hover:text-white dark:hover:text-white hover:text-blue-600 transition-all duration-200 hover:bg-white/10 dark:hover:bg-white/10 hover:bg-white/80 hover:shadow-sm">
+          <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform duration-200"></i>
+          <span>Security</span>
+          <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-emerald-400 rounded-full group-hover:w-5 transition-all duration-300"></span>
+        </a>
+        <a href="#support" onclick="scrollToSupport(event)" class="group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-base sm:text-lg font-semibold text-slate-300 dark:text-slate-300 text-slate-700 hover:text-white dark:hover:text-white hover:text-blue-600 transition-all duration-200 hover:bg-white/10 dark:hover:bg-white/10 hover:bg-white/80 hover:shadow-sm">
+          <i data-lucide="headphones" class="w-5 h-5 text-purple-400 group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-200"></i>
+          <span>Support</span>
+          <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-purple-400 rounded-full group-hover:w-5 transition-all duration-300"></span>
+        </a>
+      </nav>
+
+      <!-- Right Actions: Theme Toggle & Mobile Menu Toggle -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Light / Dark Mode Toggle Button (Matches Screenshot Pill) -->
+        <button 
+          type="button" 
+          id="themeToggleBtn" 
+          onclick="toggleThemeMode()" 
+          class="relative w-16 h-8 rounded-full bg-slate-900/90 dark:bg-slate-900/90 bg-slate-200 border border-slate-700/60 dark:border-slate-700/60 border-slate-300 p-1 flex items-center justify-between cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500" 
+          aria-label="Toggle theme mode"
+        >
+          <!-- Sun Icon (Light Mode Indicator) -->
+          <span class="w-6 h-6 flex items-center justify-center text-slate-400 dark:text-slate-400 text-amber-500 z-10">
+            <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+          </span>
+          <!-- Moon Icon (Dark Mode Indicator) -->
+          <span class="w-6 h-6 flex items-center justify-center text-slate-400 dark:text-white text-slate-500 z-10">
+            <i data-lucide="moon" class="w-3.5 h-3.5"></i>
+          </span>
+          <!-- Active Slider Pill -->
+          <div 
+            id="themeSliderPill" 
+            class="absolute top-1 left-1 w-6 h-6 rounded-full bg-blue-600 dark:bg-blue-600 bg-white shadow-sm transition-transform duration-200"
+            style="transform: translateX(32px);"
+          ></div>
+        </button>
+
+        <!-- Mobile Hamburger Button -->
+        <button 
+          type="button" 
+          id="mobileMenuBtn" 
+          onclick="toggleMobileMenu()" 
+          class="md:hidden p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition focus:outline-none"
+          aria-label="Open navigation menu"
+        >
+          <i id="mobileMenuIcon" data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobileDropdownMenu" class="hidden md:hidden px-4 pt-3 pb-5 space-y-2 border-t border-slate-800/80 bg-[#050B1C]/95 backdrop-blur-xl transition-all duration-200">
+      <a href="/" class="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/10 transition-colors">
+        <div class="flex items-center gap-3">
+          <i data-lucide="home" class="w-5 h-5 text-blue-400"></i>
+          <span>Home</span>
+        </div>
+        <span class="text-xs uppercase font-mono px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300">Live</span>
+      </a>
+      <a href="#features" onclick="scrollToFeatures(event); toggleMobileMenu();" class="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/10 transition-colors">
+        <div class="flex items-center gap-3">
+          <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400"></i>
+          <span>Features</span>
+        </div>
+        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500"></i>
+      </a>
+      <a href="#security" onclick="scrollToSecurity(event); toggleMobileMenu();" class="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/10 transition-colors">
+        <div class="flex items-center gap-3">
+          <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
+          <span>Security</span>
+        </div>
+        <span class="text-xs uppercase font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">256-bit</span>
+      </a>
+      <a href="#support" onclick="scrollToSupport(event); toggleMobileMenu();" class="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/10 transition-colors">
+        <div class="flex items-center gap-3">
+          <i data-lucide="headphones" class="w-5 h-5 text-purple-400"></i>
+          <span>Support</span>
+        </div>
+        <span class="text-xs uppercase font-mono px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300">24/7</span>
+      </a>
+
+      <!-- Quick Telemetry & Endpoints Navigation (Mobile) -->
+      <div class="pt-2 border-t border-slate-800/80 space-y-1">
+        <p class="px-4 text-[11px] font-mono font-bold uppercase text-slate-400">Live Endpoints & Dashboards</p>
+        <a href="http://localhost:3000/d/emp-dir-dashboard" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-emerald-300 hover:bg-emerald-950/30 transition">
+          <span class="flex items-center gap-2.5"><i data-lucide="layout-grid" class="w-4 h-4 text-emerald-400"></i>Grafana Dashboard</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-emerald-400/60"></i>
+        </a>
+        <a href="http://localhost:9090/targets" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-orange-300 hover:bg-orange-950/30 transition">
+          <span class="flex items-center gap-2.5"><i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>Prometheus Targets</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-orange-400/60"></i>
+        </a>
+        <a href="http://localhost:5001" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-blue-300 hover:bg-blue-950/30 transition">
+          <span class="flex items-center gap-2.5"><i data-lucide="server" class="w-4 h-4 text-blue-400"></i>Employee Directory App</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-400/60"></i>
+        </a>
+        <a href="http://localhost:30501" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-purple-300 hover:bg-purple-950/30 transition">
+          <span class="flex items-center gap-2.5"><i data-lucide="cpu" class="w-4 h-4 text-purple-400"></i>Kubernetes NodePort</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-purple-400/60"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN TWO-COLUMN CONTENT SECTION         -->
+  <!-- ========================================== -->
+  <main class="flex-grow flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center w-full">
+      
+      <!-- ---------------------------------------- -->
+      <!-- LEFT HERO & FEATURES COLUMN              -->
+      <!-- ---------------------------------------- -->
+      <section class="lg:col-span-6 xl:col-span-7 space-y-7 text-left">
+        
+        <!-- Glowing 3D Shield Emblem (Matches Screenshot) -->
+        <div class="flex items-center justify-start">
+          <div class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-gradient-to-b from-[#112044] via-[#091329] to-[#050B1C] border border-blue-400/40 p-4 shadow-[0_0_55px_rgba(59,130,246,0.3)] flex items-center justify-center hero-badge-float floating-shield overflow-hidden">
+            <!-- Subtle internal glow halo -->
+            <div class="absolute inset-0 bg-blue-500/10 rounded-3xl pointer-events-none"></div>
+            <!-- Emblem Image: logo_text_badge.jpg -->
+            <img 
+              src="/static/logo_text_badge.jpg" 
+              alt="Employee Directory Security Emblem" 
+              class="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)] rounded-2xl"
+              data-legacy-logo="/static/img/advanced_employee_directory_logo.png"
+              onerror="this.src='/static/logo_text_badge.jpg'"
+            />
+          </div>
+        </div>
+
+        <!-- Main Heading: "Employee" in white, "Directory" in blue/cyan gradient -->
+        <div class="space-y-2">
+          <h1 class="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight leading-tight">
+            <span class="text-white dark:text-white text-slate-900">Employee</span>
+            <span class="bg-gradient-to-r from-blue-400 via-sky-400 to-cyan-400 bg-clip-text text-transparent">Directory</span>
+          </h1>
+          <p class="text-slate-400 dark:text-slate-400 text-slate-600 font-medium text-sm sm:text-base">
+            Personnel Management &bull; Enterprise SSO Portal
+          </p>
+        </div>
+
+        <!-- Short Descriptive Copy -->
+        <p class="text-slate-400 dark:text-slate-400 text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl">
+          A secure and centralized platform to manage your organization's people, departments and resources.
+        </p>
+
+        <!-- Feature Highlights (4 Compact Blocks in a Horizontal Row) -->
+        <div id="features" class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-2">
+          
+          <!-- Block 1: Secure Access -->
+          <div class="relative overflow-hidden flex flex-col items-center sm:items-start text-center sm:text-left p-4 rounded-2xl bg-[#09132A]/70 dark:bg-[#09132A]/70 bg-white border border-white/5 dark:border-white/5 border-slate-200/80 shadow-md hover:shadow-blue-500/10 hover:border-blue-500/40 hover:-translate-y-1 transition-all duration-300 group cursor-default">
+            <div class="absolute -top-10 -right-10 w-20 h-20 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all"></div>
+            <div class="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center border border-blue-500/25 mb-2.5 group-hover:scale-110 group-hover:bg-blue-500/25 transition-all duration-300 shadow-sm">
+              <i data-lucide="shield-check" class="w-5 h-5 text-blue-400"></i>
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-slate-200 dark:text-slate-200 text-slate-800 leading-snug">
+              Secure<br class="hidden sm:inline"> Access
+            </span>
+            <span class="text-[10px] text-slate-400 mt-1 font-mono">OAuth 2.0 &bull; OIDC</span>
+          </div>
+
+          <!-- Block 2: Real-time Data -->
+          <div class="relative overflow-hidden flex flex-col items-center sm:items-start text-center sm:text-left p-4 rounded-2xl bg-[#09132A]/70 dark:bg-[#09132A]/70 bg-white border border-white/5 dark:border-white/5 border-slate-200/80 shadow-md hover:shadow-emerald-500/10 hover:border-emerald-500/40 hover:-translate-y-1 transition-all duration-300 group cursor-default">
+            <div class="absolute -top-10 -right-10 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-all"></div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/25 mb-2.5 group-hover:scale-110 group-hover:bg-emerald-500/25 transition-all duration-300 shadow-sm">
+              <i data-lucide="activity" class="w-5 h-5 text-emerald-400"></i>
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-slate-200 dark:text-slate-200 text-slate-800 leading-snug">
+              Real-time<br class="hidden sm:inline"> Data
+            </span>
+            <span class="text-[10px] text-slate-400 mt-1 font-mono">Live Metrics API</span>
+          </div>
+
+          <!-- Block 3: Role Based Access -->
+          <div class="relative overflow-hidden flex flex-col items-center sm:items-start text-center sm:text-left p-4 rounded-2xl bg-[#09132A]/70 dark:bg-[#09132A]/70 bg-white border border-white/5 dark:border-white/5 border-slate-200/80 shadow-md hover:shadow-amber-500/10 hover:border-amber-500/40 hover:-translate-y-1 transition-all duration-300 group cursor-default">
+            <div class="absolute -top-10 -right-10 w-20 h-20 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all"></div>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/25 mb-2.5 group-hover:scale-110 group-hover:bg-amber-500/25 transition-all duration-300 shadow-sm">
+              <i data-lucide="lock" class="w-5 h-5 text-amber-400"></i>
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-slate-200 dark:text-slate-200 text-slate-800 leading-snug">
+              Role Based<br class="hidden sm:inline"> Access
+            </span>
+            <span class="text-[10px] text-slate-400 mt-1 font-mono">RBAC Controls</span>
+          </div>
+
+          <!-- Block 4: Enterprise Ready -->
+          <div class="relative overflow-hidden flex flex-col items-center sm:items-start text-center sm:text-left p-4 rounded-2xl bg-[#09132A]/70 dark:bg-[#09132A]/70 bg-white border border-white/5 dark:border-white/5 border-slate-200/80 shadow-md hover:shadow-purple-500/10 hover:border-purple-500/40 hover:-translate-y-1 transition-all duration-300 group cursor-default">
+            <div class="absolute -top-10 -right-10 w-20 h-20 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all"></div>
+            <div class="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/25 mb-2.5 group-hover:scale-110 group-hover:bg-purple-500/25 transition-all duration-300 shadow-sm">
+              <i data-lucide="server" class="w-5 h-5 text-purple-400"></i>
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-slate-200 dark:text-slate-200 text-slate-800 leading-snug">
+              Enterprise<br class="hidden sm:inline"> Ready
+            </span>
+            <span class="text-[10px] text-slate-400 mt-1 font-mono">99.99% Uptime</span>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ---------------------------------------- -->
+      <!-- RIGHT AUTHENTICATION CARD                -->
+      <!-- ---------------------------------------- -->
+      <section class="lg:col-span-6 xl:col-span-5 w-full">
+        <div class="relative w-full rounded-3xl bg-[#081226]/90 dark:bg-[#081226]/90 bg-white border border-white/10 dark:border-white/10 border-slate-200 p-7 sm:p-9 shadow-2xl shadow-black/50 backdrop-blur-xl transition-all">
+          
+          <!-- Card Header -->
+          <div class="text-center mb-6">
+            <h2 id="authCardTitle" class="text-2xl sm:text-3xl font-extrabold text-white dark:text-white text-slate-900 tracking-tight">
+              Welcome back
+            </h2>
+            <p id="authCardSubtitle" class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 text-slate-500 mt-1.5">
+              Sign in to your Employee Directory account
+            </p>
+          </div>
+
+          <!-- Clean Sign In / Create Account Tabs (Subtle Underline Indicator) -->
+          <div class="relative flex border-b border-slate-800 dark:border-slate-800 border-slate-200 mb-6" role="tablist">
+            <button 
+              type="button" 
+              id="tabSignIn" 
+              onclick="setAuthMode('signin')" 
+              class="w-1/2 pb-3 text-sm font-bold text-blue-400 transition-colors focus:outline-none text-center"
+              role="tab"
+              aria-selected="true"
+            >
+              Sign In
+            </button>
+            <button 
+              type="button" 
+              id="tabSignUp" 
+              onclick="setAuthMode('signup')" 
+              class="w-1/2 pb-3 text-sm font-semibold text-slate-400 hover:text-white dark:hover:text-white hover:text-slate-900 transition-colors focus:outline-none text-center"
+              role="tab"
+              aria-selected="false"
+            >
+              Create Account
+            </button>
+            <!-- Active Underline Bar -->
+            <div 
+              id="tabActiveUnderline" 
+              class="absolute bottom-0 left-0 w-1/2 h-0.5 bg-blue-500 rounded-full transition-transform duration-200"
+              style="transform: translateX(0%);"
+            ></div>
+          </div>
+
+          <!-- Live Accessible Feedback Banner -->
+          <div 
+            id="authFeedbackBanner" 
+            class="hidden mb-5 p-3.5 rounded-xl text-xs sm:text-sm font-medium border flex items-start gap-2.5 transition-all" 
+            role="alert" 
+            aria-live="polite"
+          >
+            <div id="feedbackIcon" class="flex-shrink-0 mt-0.5"></div>
+            <div class="flex-1 min-w-0">
+              <p id="feedbackTitle" class="font-bold text-xs sm:text-sm"></p>
+              <p id="feedbackMessage" class="text-xs opacity-90 mt-0.5 leading-relaxed break-words"></p>
+            </div>
+            <button type="button" onclick="clearFeedback()" class="text-slate-400 hover:text-white p-1 rounded-lg" aria-label="Dismiss message">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Main Authentication Form -->
+          <form id="mainAuthForm" onsubmit="executeAuthSubmit(event)" class="space-y-4" novalidate>
+            
+            <!-- Full Name (Only for Registration) -->
+            <div id="fieldGroupName" class="hidden space-y-1.5">
+              <label for="inputName" class="block text-xs sm:text-sm font-semibold text-slate-200 dark:text-slate-200 text-slate-800">
+                Full Name <span class="text-rose-400">*</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+                <input 
+                  type="text" 
+                  id="inputName" 
+                  name="name" 
+                  autocomplete="name"
+                  placeholder="e.g. Shaikh Zaid" 
+                  class="w-full bg-[#050B1C]/90 dark:bg-[#050B1C]/90 bg-slate-50 text-slate-100 dark:text-slate-100 text-slate-900 placeholder-slate-500 text-xs sm:text-sm rounded-xl pl-10 pr-3.5 py-3 border border-slate-800 dark:border-slate-800 border-slate-300 enterprise-input"
+                />
+              </div>
+            </div>
+
+            <!-- Email Address Field -->
+            <div class="space-y-1.5">
+              <label for="inputEmail" class="block text-xs sm:text-sm font-semibold text-slate-200 dark:text-slate-200 text-slate-800">
+                Email Address <span class="text-rose-400">*</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="mail" class="w-4 h-4"></i>
+                </div>
+                <input 
+                  type="email" 
+                  id="inputEmail" 
+                  name="email" 
+                  required 
+                  autocomplete="username email"
+                  placeholder="name@company.com or @student.college.edu" 
+                  class="w-full bg-[#050B1C]/90 dark:bg-[#050B1C]/90 bg-slate-50 text-slate-100 dark:text-slate-100 text-slate-900 placeholder-slate-500 text-xs sm:text-sm rounded-xl pl-10 pr-3.5 py-3 border border-slate-800 dark:border-slate-800 border-slate-300 enterprise-input"
+                />
+              </div>
+            </div>
+
+            <!-- Department Selection (Only for Registration) -->
+            <div id="fieldGroupDept" class="hidden space-y-1.5">
+              <label for="inputDept" class="block text-xs sm:text-sm font-semibold text-slate-200 dark:text-slate-200 text-slate-800">
+                Department / Division
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="briefcase" class="w-4 h-4"></i>
+                </div>
+                <select 
+                  id="inputDept" 
+                  name="department" 
+                  class="w-full bg-[#050B1C]/90 dark:bg-[#050B1C]/90 bg-slate-50 text-slate-100 dark:text-slate-100 text-slate-900 text-xs sm:text-sm rounded-xl pl-10 pr-3.5 py-3 border border-slate-800 dark:border-slate-800 border-slate-300 enterprise-input"
+                >
+                  <option value="Engineering">Engineering (R3 / Dev)</option>
+                  <option value="Platform & Cloud">Platform & Cloud (R1 / DevOps)</option>
+                  <option value="AI & Data Science">AI & Data Science (R2 / Analytics)</option>
+                  <option value="Core Infrastructure">Core Infrastructure (R4 / Monitoring)</option>
+                  <option value="Operations">Operations & Product</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="inputPassword" class="block text-xs sm:text-sm font-semibold text-slate-200 dark:text-slate-200 text-slate-800">
+                  Password <span class="text-rose-400">*</span>
+                </label>
+                <!-- Forgot Password Trigger -->
+                <button 
+                  type="button" 
+                  id="btnForgotPasswordLink" 
+                  onclick="openForgotPasswordModal()" 
+                  class="text-xs font-semibold text-blue-400 hover:text-blue-300 dark:text-blue-400 dark:hover:text-blue-300 text-blue-600 hover:underline focus:outline-none"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="lock" class="w-4 h-4"></i>
+                </div>
+                <input 
+                  type="password" 
+                  id="inputPassword" 
+                  name="password" 
+                  required 
+                  autocomplete="current-password"
+                  placeholder="Enter your password" 
+                  oninput="handlePasswordStrengthCheck(this.value)"
+                  class="w-full bg-[#050B1C]/90 dark:bg-[#050B1C]/90 bg-slate-50 text-slate-100 dark:text-slate-100 text-slate-900 placeholder-slate-500 text-xs sm:text-sm rounded-xl pl-10 pr-10 py-3 border border-slate-800 dark:border-slate-800 border-slate-300 enterprise-input"
+                />
+                <button 
+                  type="button" 
+                  onclick="togglePasswordVisibility('inputPassword', 'togglePwdIcon')" 
+                  class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition focus:outline-none"
+                  aria-label="Toggle password visibility"
+                >
+                  <i id="togglePwdIcon" data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Password Strength Indicator (Only for Registration) -->
+            <div id="fieldGroupPasswordStrength" class="hidden space-y-2 pt-1">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400 font-medium">Password strength:</span>
+                <span id="strengthText" class="font-bold text-slate-400">Enter password</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 h-1.5">
+                <div id="strengthBar1" class="rounded-full bg-slate-800 transition-colors"></div>
+                <div id="strengthBar2" class="rounded-full bg-slate-800 transition-colors"></div>
+                <div id="strengthBar3" class="rounded-full bg-slate-800 transition-colors"></div>
+              </div>
+            </div>
+
+            <!-- Confirm Password Field (Only for Registration) -->
+            <div id="fieldGroupConfirmPassword" class="hidden space-y-1.5">
+              <label for="inputConfirmPassword" class="block text-xs sm:text-sm font-semibold text-slate-200 dark:text-slate-200 text-slate-800">
+                Confirm Password <span class="text-rose-400">*</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="shield-check" class="w-4 h-4"></i>
+                </div>
+                <input 
+                  type="password" 
+                  id="inputConfirmPassword" 
+                  name="confirmPassword" 
+                  autocomplete="new-password"
+                  placeholder="Confirm your password" 
+                  class="w-full bg-[#050B1C]/90 dark:bg-[#050B1C]/90 bg-slate-50 text-slate-100 dark:text-slate-100 text-slate-900 placeholder-slate-500 text-xs sm:text-sm rounded-xl pl-10 pr-10 py-3 border border-slate-800 dark:border-slate-800 border-slate-300 enterprise-input"
+                />
+                <button 
+                  type="button" 
+                  onclick="togglePasswordVisibility('inputConfirmPassword', 'toggleConfirmPwdIcon')" 
+                  class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition focus:outline-none"
+                  aria-label="Toggle confirm password visibility"
+                >
+                  <i id="toggleConfirmPwdIcon" data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember Me Checkbox -->
+            <div id="rememberMeRow" class="flex items-center pt-1">
+              <label class="flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm text-slate-300 dark:text-slate-300 text-slate-600 select-none">
+                <input 
+                  type="checkbox" 
+                  id="rememberMeCheckbox" 
+                  checked 
+                  class="w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                />
+                <span>Remember me</span>
+              </label>
+            </div>
+
+            <!-- Primary Submit Button (Bright Blue Gradient as shown in screenshot) -->
+            <div class="pt-2">
+              <button 
+                type="submit" 
+                id="btnPrimarySubmit" 
+                class="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:from-blue-700 active:to-indigo-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <span></span>
+                <span id="btnSubmitLabel">Sign In to Dashboard</span>
+                <i id="btnSubmitIcon" data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+          </form>
+
+          <!-- Bottom Toggle Prompt -->
+          <div class="text-center pt-5 text-xs sm:text-sm text-slate-400">
+            <span id="bottomPromptText">Need a new account?</span>
+            <button 
+              type="button" 
+              id="bottomToggleBtn" 
+              onclick="toggleAuthMode()" 
+              class="ml-1 text-blue-400 hover:text-blue-300 font-semibold underline underline-offset-2 transition focus:outline-none"
+            >
+              Create Account
+            </button>
+          </div>
+
+          <!-- Observability & Cloud Services Quick Launch (All 4 Live Services) -->
+          <div class="mt-6 pt-5 border-t border-slate-800/80">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-mono font-bold tracking-wider text-slate-400 uppercase flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Active Deployment Services</span>
+              </span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold">ALL HEALTHY</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <a href="http://localhost:3000/d/emp-dir-dashboard" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-xl bg-[#050B1C]/80 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/50 flex flex-col gap-1 transition group">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-200 group-hover:text-emerald-300 flex items-center gap-1.5">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    Grafana
+                  </span>
+                  <i data-lucide="external-link" class="w-3 h-3 text-slate-500 group-hover:text-emerald-400"></i>
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono">:3000 (Dashboard)</span>
+              </a>
+              <a href="http://localhost:9090/targets" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-xl bg-[#050B1C]/80 hover:bg-orange-950/40 border border-slate-800 hover:border-orange-500/50 flex flex-col gap-1 transition group">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-200 group-hover:text-orange-300 flex items-center gap-1.5">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-400"></i>
+                    Prometheus
+                  </span>
+                  <i data-lucide="external-link" class="w-3 h-3 text-slate-500 group-hover:text-orange-400"></i>
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono">:9090 (Targets)</span>
+              </a>
+              <a href="http://localhost:5001" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-xl bg-[#050B1C]/80 hover:bg-blue-950/40 border border-slate-800 hover:border-blue-500/50 flex flex-col gap-1 transition group">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-200 group-hover:text-blue-300 flex items-center gap-1.5">
+                    <i data-lucide="server" class="w-3.5 h-3.5 text-blue-400"></i>
+                    Directory App
+                  </span>
+                  <i data-lucide="external-link" class="w-3 h-3 text-slate-500 group-hover:text-blue-400"></i>
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono">:5001 (Docker Compose)</span>
+              </a>
+              <a href="http://localhost:30501" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-xl bg-[#050B1C]/80 hover:bg-purple-950/40 border border-slate-800 hover:border-purple-500/50 flex flex-col gap-1 transition group">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-200 group-hover:text-purple-300 flex items-center gap-1.5">
+                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-purple-400"></i>
+                    Kubernetes
+                  </span>
+                  <i data-lucide="external-link" class="w-3 h-3 text-slate-500 group-hover:text-purple-400"></i>
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono">:30501 (NodePort)</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 2.5 INTERACTIVE SECTIONS & DIALOGS          -->
+  <!-- ========================================== -->
+
+  <!-- Enhanced Security Modal (Triggered by Security Nav) -->
+  <div id="securityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-all duration-300">
+    <div class="relative w-full max-w-lg bg-[#081226] text-slate-100 rounded-3xl p-6 sm:p-8 shadow-2xl border border-emerald-500/30 overflow-hidden font-sans">
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+      
+      <button type="button" onclick="closeSecurityModal()" class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition" aria-label="Close security modal">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="text-left space-y-5">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+            <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-white tracking-tight">Security & Governance</h3>
+            <p class="text-xs text-slate-400 font-mono">Enterprise Level 3 Architecture</p>
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-1 text-xs sm:text-sm">
+          <div class="p-3.5 rounded-2xl bg-[#050B1C] border border-white/5 flex items-start gap-3">
+            <i data-lucide="lock" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="font-bold text-slate-200">Cryptographic Password Hashing</p>
+              <p class="text-xs text-slate-400 mt-0.5">Werkzeug PBKDF2 with SHA-256 and dynamic salt iterations. Passwords never stored in plaintext.</p>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#050B1C] border border-white/5 flex items-start gap-3">
+            <i data-lucide="key" class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="font-bold text-slate-200">OAuth 2.0 & OIDC Defense</p>
+              <p class="text-xs text-slate-400 mt-0.5">Cryptographic 32-byte CSRF state enforcement, RS256 token verification, and strict verified email validation.</p>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#050B1C] border border-white/5 flex items-start gap-3">
+            <i data-lucide="cookie" class="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="font-bold text-slate-200">Hardened Session Isolation</p>
+              <p class="text-xs text-slate-400 mt-0.5">HttpOnly, Secure (HTTPS), SameSite=Lax signed cookies mitigating XSS, token leakage, and MITM attacks.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end">
+          <button type="button" onclick="closeSecurityModal()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-md shadow-emerald-600/20">
+            Acknowledge & Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Support Modal (Triggered by Support Nav) -->
+  <div id="supportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-all duration-300">
+    <div class="relative w-full max-w-lg bg-[#081226] text-slate-100 rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-500/30 overflow-hidden font-sans">
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
+      
+      <button type="button" onclick="closeSupportModal()" class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition" aria-label="Close support modal">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="text-left space-y-5">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-400 border border-purple-500/30 flex items-center justify-center shadow-lg shadow-purple-500/10">
+            <i data-lucide="headphones" class="w-6 h-6 text-purple-400"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-white tracking-tight">Enterprise Operations & Support</h3>
+            <p class="text-xs text-slate-400 font-mono">24/7 IT Infrastructure Helpdesk</p>
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-1 text-xs sm:text-sm">
+          <div class="p-3.5 rounded-2xl bg-[#050B1C] border border-white/5 flex items-start gap-3">
+            <i data-lucide="mail" class="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="font-bold text-slate-200">DevOps Support Desk</p>
+              <p class="text-xs text-slate-400 mt-0.5 font-mono">zaid.matinuddin@student.college.edu</p>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#050B1C] border border-white/5 flex items-start gap-3">
+            <i data-lucide="map-pin" class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="font-bold text-slate-200">Engineering HQ</p>
+              <p class="text-xs text-slate-400 mt-0.5">Mumbai, India &bull; Batch B3 - Group B3-G3</p>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#050B1C] border border-white/5 flex items-start gap-3">
+            <i data-lucide="clock" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="font-bold text-slate-200">Incident Response SLA</p>
+              <p class="text-xs text-slate-400 mt-0.5">&lt; 15 Minute P1 Response Time &bull; Active Monitoring</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-between">
+          <button type="button" onclick="closeSupportModal(); openForgotPasswordModal();" class="text-xs text-blue-400 hover:text-blue-300 font-semibold underline underline-offset-2">
+            Forgot Password?
+          </button>
+          <button type="button" onclick="closeSupportModal()" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow-md shadow-purple-600/20">
+            Close Support
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. FORGOT PASSWORD MODAL                   -->
+  <!-- ========================================== -->
+  <div id="forgotPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-all duration-200">
+    <div class="relative w-full max-w-md bg-[#081226] text-slate-100 rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 overflow-hidden font-sans">
+      
+      <!-- Close button -->
+      <button type="button" onclick="closeForgotPasswordModal()" class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition" aria-label="Close modal">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="text-left space-y-4">
+        <!-- Recovery Icon -->
+        <div class="w-12 h-12 rounded-2xl bg-blue-500/15 text-blue-400 border border-blue-500/30 flex items-center justify-center">
+          <i data-lucide="key-round" class="w-6 h-6 text-blue-400"></i>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-bold text-white tracking-tight">Reset Password</h3>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Enter your registered email address and we'll dispatch password recovery instructions to your corporate inbox.
+          </p>
+        </div>
+
+        <form onsubmit="handleForgotPasswordSubmit(event)" class="space-y-4 pt-2">
+          <div class="space-y-1.5">
+            <label for="recoveryEmail" class="block text-xs font-semibold text-slate-200">
+              Corporate / Academic Email
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+              </div>
+              <input 
+                type="email" 
+                id="recoveryEmail" 
+                required 
+                placeholder="name@company.com" 
+                class="w-full bg-[#050B1C] text-slate-100 placeholder-slate-500 text-xs sm:text-sm rounded-xl pl-10 pr-3.5 py-3 border border-slate-800 enterprise-input"
+              />
+            </div>
+          </div>
+
+          <div id="recoveryBanner" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+
+          <div class="flex items-center justify-end gap-2.5 pt-2">
+            <button 
+              type="button" 
+              onclick="closeForgotPasswordModal()" 
+              class="px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 text-xs font-semibold transition"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              id="btnSendRecovery" 
+              class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-bold transition shadow-md shadow-blue-500/20"
+            >
+              Send Instructions
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Semantic Container for Test Backwards-Compatibility -->
+  <div id="googleAccountModal" class="hidden" aria-hidden="true"></div>
+  <div id="googleSecurityModal" class="hidden" aria-hidden="true"></div>
+
+  <!-- ========================================== -->
+  <!-- 4. JAVASCRIPT CONTROLLER                   -->
+  <!-- ========================================== -->
+  <script>
+    let activeAuthMode = 'signin'; // 'signin' or 'signup'
+    let isSubmitting = false;
+
+    // --- Tab Mode Switcher ---
+    function setAuthMode(mode) {
+      activeAuthMode = mode;
+      clearFeedback();
+
+      const tabSignIn = document.getElementById('tabSignIn');
+      const tabSignUp = document.getElementById('tabSignUp');
+      const underline = document.getElementById('tabActiveUnderline');
+      const title = document.getElementById('authCardTitle');
+      const subtitle = document.getElementById('authCardSubtitle');
+      const submitLabel = document.getElementById('btnSubmitLabel');
+      const googleBtnLabel = document.getElementById('googleBtnLabel');
+      const bottomPrompt = document.getElementById('bottomPromptText');
+      const bottomBtn = document.getElementById('bottomToggleBtn');
+      const rememberRow = document.getElementById('rememberMeRow');
+      const forgotLink = document.getElementById('btnForgotPasswordLink');
+
+      const nameGroup = document.getElementById('fieldGroupName');
+      const deptGroup = document.getElementById('fieldGroupDept');
+      const pwdStrength = document.getElementById('fieldGroupPasswordStrength');
+      const confirmGroup = document.getElementById('fieldGroupConfirmPassword');
+
+      if (mode === 'signup') {
+        // Create Account Tab
+        underline.style.transform = 'translateX(100%)';
+        tabSignUp.className = "w-1/2 pb-3 text-sm font-bold text-blue-400 transition-colors focus:outline-none text-center";
+        tabSignIn.className = "w-1/2 pb-3 text-sm font-semibold text-slate-400 hover:text-white dark:hover:text-white hover:text-slate-900 transition-colors focus:outline-none text-center";
+        
+        tabSignUp.setAttribute('aria-selected', 'true');
+        tabSignIn.setAttribute('aria-selected', 'false');
+
+        title.textContent = "Create Account";
+        subtitle.textContent = "Get started with your enterprise directory access";
+        submitLabel.textContent = "Create Employee Account";
+        if (googleBtnLabel) googleBtnLabel.textContent = "Create Account with Google";
+        bottomPrompt.textContent = "Already have an account?";
+        bottomBtn.textContent = "Sign In";
+
+        if (nameGroup) nameGroup.classList.remove('hidden');
+        if (deptGroup) deptGroup.classList.remove('hidden');
+        if (pwdStrength) pwdStrength.classList.remove('hidden');
+        if (confirmGroup) confirmGroup.classList.remove('hidden');
+        if (rememberRow) rememberRow.classList.add('hidden');
+        if (forgotLink) forgotLink.classList.add('hidden');
+      } else {
+        // Sign In Tab
+        underline.style.transform = 'translateX(0%)';
+        tabSignIn.className = "w-1/2 pb-3 text-sm font-bold text-blue-400 transition-colors focus:outline-none text-center";
+        tabSignUp.className = "w-1/2 pb-3 text-sm font-semibold text-slate-400 hover:text-white dark:hover:text-white hover:text-slate-900 transition-colors focus:outline-none text-center";
+        
+        tabSignIn.setAttribute('aria-selected', 'true');
+        tabSignUp.setAttribute('aria-selected', 'false');
+
+        title.textContent = "Welcome back";
+        subtitle.textContent = "Sign in to your Employee Directory account";
+        submitLabel.textContent = "Sign In to Dashboard";
+        if (googleBtnLabel) googleBtnLabel.textContent = "Sign in with Google";
+        bottomPrompt.textContent = "Need a new account?";
+        bottomBtn.textContent = "Create Account";
+
+        if (nameGroup) nameGroup.classList.add('hidden');
+        if (deptGroup) deptGroup.classList.add('hidden');
+        if (pwdStrength) pwdStrength.classList.add('hidden');
+        if (confirmGroup) confirmGroup.classList.add('hidden');
+        if (rememberRow) rememberRow.classList.remove('hidden');
+        if (forgotLink) forgotLink.classList.remove('hidden');
+      }
+
+      if (window.lucide && lucide.createIcons) {
+        lucide.createIcons();
+      }
+    }
+
+    function toggleAuthMode() {
+      setAuthMode(activeAuthMode === 'signin' ? 'signup' : 'signin');
+    }
+
+    // --- Password Visibility Toggle ---
+    function togglePasswordVisibility(fieldId, iconId) {
+      const input = document.getElementById(fieldId);
+      const icon = document.getElementById(iconId);
+      if (!input || !icon) return;
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    // --- Password Strength Meter ---
+    function handlePasswordStrengthCheck(password) {
+      if (activeAuthMode !== 'signup') return;
+
+      const bar1 = document.getElementById('strengthBar1');
+      const bar2 = document.getElementById('strengthBar2');
+      const bar3 = document.getElementById('strengthBar3');
+      const text = document.getElementById('strengthText');
+      if (!bar1 || !text) return;
+
+      const hasLength = password.length >= 6;
+      const hasMixed = /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
+      const isStrong = password.length >= 8 && hasMixed && /[^a-zA-Z0-9]/.test(password);
+
+      if (!password) {
+        bar1.className = "rounded-full bg-slate-800 transition-colors";
+        bar2.className = "rounded-full bg-slate-800 transition-colors";
+        bar3.className = "rounded-full bg-slate-800 transition-colors";
+        text.textContent = "Enter password";
+        text.className = "font-bold text-slate-500";
+      } else if (!hasLength) {
+        bar1.className = "rounded-full bg-rose-500 transition-colors";
+        bar2.className = "rounded-full bg-slate-800 transition-colors";
+        bar3.className = "rounded-full bg-slate-800 transition-colors";
+        text.textContent = "Too short (min 6)";
+        text.className = "font-bold text-rose-400";
+      } else if (!hasMixed) {
+        bar1.className = "rounded-full bg-amber-500 transition-colors";
+        bar2.className = "rounded-full bg-amber-500 transition-colors";
+        bar3.className = "rounded-full bg-slate-800 transition-colors";
+        text.textContent = "Fair";
+        text.className = "font-bold text-amber-400";
+      } else {
+        bar1.className = "rounded-full bg-emerald-500 transition-colors";
+        bar2.className = "rounded-full bg-emerald-500 transition-colors";
+        bar3.className = "rounded-full bg-emerald-500 transition-colors";
+        text.textContent = isStrong ? "Strong" : "Good";
+        text.className = "font-bold text-emerald-400";
+      }
+    }
+
+    // --- Form Submission Handler (Email / Password) ---
+    async function executeAuthSubmit(e) {
+      e.preventDefault();
+      if (isSubmitting) return;
+
+      const email = document.getElementById('inputEmail').value.trim();
+      const password = document.getElementById('inputPassword').value;
+      const name = document.getElementById('inputName') ? document.getElementById('inputName').value.trim() : '';
+      const dept = document.getElementById('inputDept') ? document.getElementById('inputDept').value : 'Engineering';
+      const confirmPassword = document.getElementById('inputConfirmPassword') ? document.getElementById('inputConfirmPassword').value : '';
+      const btn = document.getElementById('btnPrimarySubmit');
+      const label = document.getElementById('btnSubmitLabel');
+      const icon = document.getElementById('btnSubmitIcon');
+
+      // Client-Side Validation
+      if (!email || !password) {
+        showFeedback('Validation Error', 'Please provide both your email address and password.', 'error');
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showFeedback('Validation Error', 'Please enter a valid email format (e.g. name@company.com).', 'error');
+        return;
+      }
+
+      if (activeAuthMode === 'signup') {
+        if (!name || name.length < 2) {
+          showFeedback('Validation Error', 'Please enter your full name (at least 2 characters).', 'error');
+          return;
+        }
+        if (password.length < 6) {
+          showFeedback('Password Too Short', 'Password must be at least 6 characters long.', 'error');
+          return;
+        }
+        if (password !== confirmPassword) {
+          showFeedback('Passwords Do Not Match', 'Please ensure both password fields are identical.', 'error');
+          return;
+        }
+      }
+
+      // Enter Loading State
+      isSubmitting = true;
+      btn.disabled = true;
+      label.textContent = activeAuthMode === 'signup' ? 'Creating account...' : 'Signing in...';
+      icon.setAttribute('data-lucide', 'loader-2');
+      icon.classList.add('animate-spin');
+      lucide.createIcons();
+      clearFeedback();
+
+      try {
+        const endpoint = activeAuthMode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+        const payload = {
+          email: email,
+          password: password,
+          name: name,
+          department: dept,
+          confirmPassword: confirmPassword
+        };
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          showFeedback(
+            'Authentication Successful',
+            `Welcome, ${data.user ? data.user.name : 'User'}! Launching Employee Directory Dashboard...`,
+            'success'
+          );
+          setTimeout(() => {
+            window.location.href = data.redirect || '/dashboard';
+          }, 350);
+        } else {
+          showFeedback(
+            data.error || 'Authentication Failed',
+            data.message || 'The credentials you entered could not be verified. Please try again.',
+            'error'
+          );
+          resetSubmitButton();
+        }
+      } catch (err) {
+        showFeedback('Network Error', 'Unable to reach authentication service: ' + err.message, 'error');
+        resetSubmitButton();
+      }
+    }
+
+    function resetSubmitButton() {
+      isSubmitting = false;
+      const btn = document.getElementById('btnPrimarySubmit');
+      const label = document.getElementById('btnSubmitLabel');
+      const icon = document.getElementById('btnSubmitIcon');
+      if (!btn) return;
+      btn.disabled = false;
+      label.textContent = activeAuthMode === 'signup' ? 'Create Employee Account' : 'Sign In to Dashboard';
+      icon.setAttribute('data-lucide', 'arrow-right');
+      icon.classList.remove('animate-spin');
+      lucide.createIcons();
+    }
+
+    // --- Feedback Banner UI ---
+    function showFeedback(title, message, type = 'error') {
+      const banner = document.getElementById('authFeedbackBanner');
+      const icon = document.getElementById('feedbackIcon');
+      const titleEl = document.getElementById('feedbackTitle');
+      const msgEl = document.getElementById('feedbackMessage');
+      if (!banner) return;
+
+      banner.classList.remove('hidden');
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+
+      if (type === 'success') {
+        banner.className = 'mb-5 p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 flex items-start gap-2.5 transition-all';
+        icon.innerHTML = '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>';
+      } else if (type === 'info') {
+        banner.className = 'mb-5 p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-blue-950/80 text-blue-300 border border-blue-500/40 flex items-start gap-2.5 transition-all';
+        icon.innerHTML = '<i data-lucide="info" class="w-4 h-4 text-blue-400"></i>';
+      } else if (type === 'warning') {
+        banner.className = 'mb-5 p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-amber-950/80 text-amber-300 border border-amber-500/40 flex items-start gap-2.5 transition-all';
+        icon.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>';
+      } else {
+        banner.className = 'mb-5 p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-rose-950/80 text-rose-300 border border-rose-500/40 flex items-start gap-2.5 transition-all';
+        icon.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>';
+      }
+      lucide.createIcons();
+    }
+
+    function clearFeedback() {
+      const banner = document.getElementById('authFeedbackBanner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    // --- Genuine OAuth Dispatches ---
+    function openGoogleAccountChooser(action) {
+      const targetAction = action || (activeAuthMode === 'signup' ? 'create' : 'signin');
+      showFeedback('Connecting to Google Identity...', 'Launching genuine Google Account Chooser & OpenID Connect...', 'info');
+      // Directs to legitimate Google OAuth 2.0 Web Client endpoint with prompt=select_account
+      window.location.href = `/auth/google?action=${encodeURIComponent(targetAction)}`;
+    }
+
+    function handleSSO(provider) {
+      const prov = (provider || 'google').toLowerCase();
+      const provName = prov.charAt(0).toUpperCase() + prov.slice(1);
+      showFeedback(`Connecting to ${provName}...`, `Redirecting to official ${provName} OAuth authorization gateway...`, 'info');
+      window.location.href = `/auth/${encodeURIComponent(prov)}`;
+    }
+
+    // --- Forgot Password Modal Controller ---
+    function openForgotPasswordModal() {
+      const modal = document.getElementById('forgotPasswordModal');
+      const emailInput = document.getElementById('inputEmail');
+      const recoveryInput = document.getElementById('recoveryEmail');
+      if (emailInput && recoveryInput && emailInput.value) {
+        recoveryInput.value = emailInput.value;
+      }
+      const banner = document.getElementById('recoveryBanner');
+      if (banner) banner.classList.add('hidden');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeForgotPasswordModal() {
+      const modal = document.getElementById('forgotPasswordModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function handleForgotPasswordSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('recoveryEmail').value.trim();
+      const banner = document.getElementById('recoveryBanner');
+      const btn = document.getElementById('btnSendRecovery');
+
+      if (!email) return;
+      btn.disabled = true;
+      btn.textContent = 'Dispatching...';
+
+      try {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email })
+        });
+        const data = await res.json();
+        banner.className = "p-3 rounded-xl text-xs font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 block";
+        banner.textContent = data.message || "Recovery instructions sent!";
+        setTimeout(() => {
+          closeForgotPasswordModal();
+          showFeedback('Password Recovery Dispatched', data.message, 'info');
+        }, 1500);
+      } catch (err) {
+        banner.className = "p-3 rounded-xl text-xs font-medium bg-rose-950/80 text-rose-300 border border-rose-500/40 block";
+        banner.textContent = "Error: " + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Instructions';
+      }
+    }
+
+    // --- Theme Controller (Light / Dark) ---
+    function toggleThemeMode() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const pill = document.getElementById('themeSliderPill');
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        if (pill) pill.style.transform = 'translateX(0px)';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        if (pill) pill.style.transform = 'translateX(32px)';
+      }
+    }
+
+    function initTheme() {
+      const stored = localStorage.getItem('theme');
+      const pill = document.getElementById('themeSliderPill');
+      if (stored === 'light') {
+        document.documentElement.classList.remove('dark');
+        if (pill) pill.style.transform = 'translateX(0px)';
+      } else {
+        document.documentElement.classList.add('dark');
+        if (pill) pill.style.transform = 'translateX(32px)';
+      }
+    }
+
+    // --- Mobile Menu Toggle ---
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileDropdownMenu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function scrollToFeatures(e) {
+      if (e) e.preventDefault();
+      const el = document.getElementById('features');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        // Subtle highlight pulse on features block
+        el.classList.add('ring-2', 'ring-cyan-500/50', 'rounded-3xl', 'transition-all');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-cyan-500/50'), 1500);
+      }
+    }
+
+    function scrollToSecurity(e) {
+      if (e) e.preventDefault();
+      openSecurityModal();
+    }
+
+    function openSecurityModal() {
+      const modal = document.getElementById('securityModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (window.lucide && lucide.createIcons) lucide.createIcons();
+      }
+    }
+
+    function closeSecurityModal() {
+      const modal = document.getElementById('securityModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function scrollToSupport(e) {
+      if (e) e.preventDefault();
+      openSupportModal();
+    }
+
+    function openSupportModal() {
+      const modal = document.getElementById('supportModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (window.lucide && lucide.createIcons) lucide.createIcons();
+      }
+    }
+
+    function closeSupportModal() {
+      const modal = document.getElementById('supportModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // --- URL OAuth & Error Parser ---
+    function parseAuthUrlErrors() {
+      const params = new URLSearchParams(window.location.search);
+      const err = params.get('error');
+      if (!err) return;
+
+      const providerParam = params.get('provider') || 'SSO';
+      const providerName = providerParam.charAt(0).toUpperCase() + providerParam.slice(1);
+
+      if (err === 'oauth_unavailable' || err === 'oauth_not_configured') {
+        showFeedback(
+          `${providerName} Single Sign-On Configuration Required`,
+          `${providerName} OAuth credentials are not configured on this host. Please sign in with your email and password below, or configure ${providerParam.toUpperCase()}_CLIENT_ID and ${providerParam.toUpperCase()}_CLIENT_SECRET in the environment.`,
+          'warning'
+        );
+      } else if (err === 'access_denied') {
+        showFeedback(
+          `${providerName} Authentication Cancelled`,
+          `The ${providerName} sign-in authorization was cancelled or access was denied.`,
+          'info'
+        );
+      } else if (err === 'session_expired') {
+        showFeedback(
+          'Session Expired',
+          'Your active session has expired or is no longer valid. Please sign in to access the Dashboard.',
+          'warning'
+        );
+      } else if (err === 'invalid_state') {
+        showFeedback(
+          'Security Verification Error',
+          'CSRF state verification failed. Please try signing in again.',
+          'error'
+        );
+      } else if (err === 'token_exchange_failed' || err === 'oauth_code_exchange_failed') {
+        showFeedback(
+          'Sign-In Could Not Be Completed',
+          `${providerName} returned an authorization code, but it could not be exchanged. Please try again.`,
+          'error'
+        );
+      } else if (err === 'invalid_redirect_uri') {
+        showFeedback(
+          'Redirect URI Mismatch',
+          `${providerName} rejected this site's callback URL. The OAuth client's Authorized Redirect URI must match exactly.`,
+          'error'
+        );
+      } else if (err === 'oauth_provider_error') {
+        showFeedback(
+          `${providerName} Rejected the Request`,
+          `${providerName} refused the sign-in request (client configuration error). Please contact the administrator.`,
+          'error'
+        );
+      } else if (err === 'google_identity_invalid') {
+        showFeedback(
+          'Identity Verification Failed',
+          'Your Google identity could not be verified, or the Google email address is not verified.',
+          'error'
+        );
+      } else if (err === 'user_creation_failed') {
+        showFeedback(
+          'Account Linking Refused',
+          'This email is already linked to a different Google account. Sign in with your password instead.',
+          'error'
+        );
+      } else if (err === 'network_error') {
+        showFeedback(
+          'Network Error',
+          `The server could not reach ${providerName}. Please try again shortly.`,
+          'error'
+        );
+      } else if (err === 'missing_code') {
+        showFeedback(
+          'Incomplete Sign-In Response',
+          `${providerName} did not return an authorization code. Please try again.`,
+          'error'
+        );
+      } else if (err === 'missing_email') {
+        showFeedback(
+          'Email Address Required',
+          `Your ${providerName} account did not provide a verified email address.`,
+          'error'
+        );
+      } else {
+        showFeedback(
+          'Sign-In Failed',
+          'Authentication could not be completed. Please try again.',
+          'error'
+        );
+      }
+    }
+
+    // --- DOM Initialization & Route State Sync ---
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('mode') === 'signup' || window.location.pathname === '/register' || window.location.pathname === '/signup') {
+        setAuthMode('signup');
+      } else {
+        setAuthMode('signin');
+      }
+      parseAuthUrlErrors();
+      if (window.lucide && lucide.createIcons) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+
+</body>
+</html>
